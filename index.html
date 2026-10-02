@@ -87,7 +87,7 @@
     <div class="progress"><div id="bar"></div></div>
     <div class="step" id="step"></div>
   </div>
-  <main id="main"></main>
+  <main id="main"><div class="intro fade"><div class="emoji">👀</div><div class="eyebrow">A very important questionnaire</div><h1>Okay, help me plan our date.</h1><p class="sub">A few quick questions. You pick the vibe, I’ll figure out the rest.</p><button class="start" id="startButton">Let’s do it →</button></div></main>
 </div>
 
 <script>
@@ -165,7 +165,7 @@ function renderIntro() {
     </div>`;
 }
 
-function start() {
+function startQuiz() {
   current = 0;
   renderQuestion();
 }
@@ -243,7 +243,7 @@ function renderResult() {
     </div>`;
 }
 
-renderIntro();
+document.getElementById("startButton").addEventListener("click", startQuiz);
 </script>
 </body>
 </html>
