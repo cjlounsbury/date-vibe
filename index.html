@@ -1,249 +1,189 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f7f4ef">
-<title>Help Me Plan Our Date</title>
-<style>
-  :root {
-    --bg: #f7f4ef;
-    --card: #fffdfa;
-    --text: #20201e;
-    --muted: #77736d;
-    --line: #e6e0d7;
-    --accent: #20201e;
-    --accentText: #fffdfa;
-    --radius: 22px;
-  }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin:0; min-height:100%; background:var(--bg); color:var(--text); font-family: -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif; }
-  body { display:flex; justify-content:center; }
-  button { font:inherit; }
-  .app {
-    width:100%;
-    max-width:520px;
-    min-height:100svh;
-    padding:24px 18px calc(28px + env(safe-area-inset-bottom));
-    display:flex;
-    flex-direction:column;
-  }
-  .top { display:flex; align-items:center; gap:12px; min-height:28px; }
-  .back {
-    width:38px; height:38px; border:0; border-radius:50%; background:transparent;
-    color:var(--text); font-size:25px; line-height:1; display:none;
-  }
-  .back.show { display:block; }
-  .progress { flex:1; height:4px; background:var(--line); border-radius:99px; overflow:hidden; }
-  .progress > div { height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .35s ease; }
-  .step { width:34px; text-align:right; font-size:12px; color:var(--muted); }
-  main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:34px 0 24px; }
-  .eyebrow { color:var(--muted); font-size:14px; margin-bottom:10px; }
-  h1 { font-size:clamp(32px, 9vw, 46px); line-height:1.02; letter-spacing:-.045em; margin:0 0 12px; font-weight:750; }
-  .sub { color:var(--muted); font-size:16px; line-height:1.45; margin:0 0 28px; max-width:410px; }
-  .choices { display:grid; gap:11px; }
-  .choice {
-    appearance:none; width:100%; border:1px solid var(--line); background:var(--card); color:var(--text);
-    border-radius:var(--radius); padding:18px 17px; text-align:left; min-height:68px;
-    display:flex; align-items:center; justify-content:space-between; gap:14px;
-    cursor:pointer; transition:transform .14s ease, background .18s ease, color .18s ease, border-color .18s ease;
-  }
-  .choice:active { transform:scale(.985); }
-  .choice .label { font-size:17px; font-weight:620; letter-spacing:-.01em; }
-  .choice .check { width:24px; height:24px; border-radius:50%; border:1px solid var(--line); flex:0 0 auto; display:grid; place-items:center; font-size:13px; }
-  .choice.selected { background:var(--accent); color:var(--accentText); border-color:var(--accent); }
-  .choice.selected .check { border-color:rgba(255,255,255,.5); background:rgba(255,255,255,.12); }
-  .choice.selected .check::after { content:"✓"; }
-  .actions { display:flex; gap:10px; margin-top:22px; }
-  .next {
-    flex:1; border:0; background:var(--accent); color:var(--accentText); border-radius:18px;
-    min-height:56px; font-weight:700; cursor:pointer; opacity:.35; transition:opacity .2s, transform .14s;
-  }
-  .next.enabled { opacity:1; }
-  .next:active { transform:scale(.985); }
-  .intro { text-align:center; }
-  .intro .emoji { font-size:44px; margin-bottom:18px; }
-  .intro h1 { max-width:420px; margin-left:auto; margin-right:auto; }
-  .start { width:100%; max-width:360px; margin:10px auto 0; min-height:58px; border:0; border-radius:18px; background:var(--accent); color:var(--accentText); font-weight:700; font-size:17px; }
-  .result { text-align:center; }
-  .result h1 { margin-bottom:14px; }
-  .result .sub { margin-left:auto; margin-right:auto; }
-  .pills { display:flex; flex-wrap:wrap; justify-content:center; gap:9px; margin:25px auto 30px; max-width:420px; }
-  .pill { border:1px solid var(--line); background:var(--card); border-radius:999px; padding:11px 14px; font-size:14px; }
-  .mystery { font-size:17px; font-weight:650; margin-top:20px; }
-  .small { color:var(--muted); font-size:13px; margin-top:10px; }
-  .fade { animation:fade .28s ease both; }
-  @keyframes fade { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
-  @media (min-width:700px) {
-    .app { padding-top:36px; }
-    main { padding-top:50px; }
-  }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f4ef">
+  <title>Help Me Plan Our Date</title>
+  <style>
+    :root{--bg:#f7f4ef;--card:#fffdfa;--text:#20201e;--muted:#77736d;--line:#e6e0d7}
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    body{min-height:100vh}
+    button{font:inherit}
+    .app{width:min(520px,100%);min-height:100vh;margin:0 auto;padding:24px 18px 32px;display:flex;flex-direction:column}
+    .top{height:38px;display:flex;align-items:center;gap:12px}
+    .back{width:38px;height:38px;border:0;background:transparent;font-size:28px;display:none}
+    .back.show{display:block}
+    .progress{height:4px;flex:1;background:var(--line);border-radius:99px;overflow:hidden}
+    .progress-fill{height:100%;width:0;background:var(--text);transition:width .25s ease}
+    .step{width:36px;text-align:right;font-size:12px;color:var(--muted)}
+    main{flex:1;display:flex;align-items:center;padding:36px 0}
+    .screen{width:100%}
+    .intro,.result{text-align:center}
+    .emoji{font-size:44px;margin-bottom:16px}
+    .eyebrow{font-size:14px;color:var(--muted);margin-bottom:10px}
+    h1{font-size:clamp(34px,9vw,48px);line-height:1.02;letter-spacing:-.045em;margin:0 0 14px}
+    .sub{font-size:16px;line-height:1.45;color:var(--muted);margin:0 auto 28px;max-width:420px}
+    .start,.next{width:100%;min-height:58px;border:0;border-radius:18px;background:var(--text);color:#fff;font-weight:700;cursor:pointer}
+    .start{max-width:360px}
+    .choices{display:grid;gap:11px}
+    .choice{width:100%;min-height:68px;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--text);padding:16px;text-align:left;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+    .choice .label{font-size:17px;font-weight:600}
+    .check{width:24px;height:24px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;flex:none}
+    .choice.selected{background:var(--text);color:#fff;border-color:var(--text)}
+    .choice.selected .check{border-color:#777}
+    .choice.selected .check:after{content:"✓"}
+    .next{margin-top:18px;opacity:.35}
+    .next.enabled{opacity:1}
+    .pills{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin:24px auto 28px}
+    .pill{padding:10px 13px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-size:14px}
+    .mystery{font-size:17px;font-weight:650}
+    .small{font-size:13px;color:var(--muted);margin-top:10px}
+    .hidden{display:none!important}
+    .fade{animation:fade .22s ease both}
+    @keyframes fade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  </style>
 </head>
 <body>
-<div class="app">
-  <div class="top" id="top">
-    <button class="back" id="back" aria-label="Back">‹</button>
-    <div class="progress"><div id="bar"></div></div>
-    <div class="step" id="step"></div>
+  <div class="app">
+    <div class="top" id="top">
+      <button class="back" id="back" type="button" aria-label="Back">‹</button>
+      <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="step" id="step"></div>
+    </div>
+
+    <main id="main">
+      <section class="screen intro fade" id="intro">
+        <div class="emoji">👀</div>
+        <div class="eyebrow">A very important questionnaire</div>
+        <h1>Okay, help me plan our date.</h1>
+        <p class="sub">A few quick questions. You pick the vibe, I’ll figure out the rest.</p>
+        <button class="start" id="start" type="button">Let’s do it →</button>
+      </section>
+    </main>
   </div>
-  <main id="main"><div class="intro fade"><div class="emoji">👀</div><div class="eyebrow">A very important questionnaire</div><h1>Okay, help me plan our date.</h1><p class="sub">A few quick questions. You pick the vibe, I’ll figure out the rest.</p><button class="start" id="startButton">Let’s do it →</button></div></main>
-</div>
 
-<script>
-const questions = [
-  {
-    title: "When?",
-    sub: "Pick your ideal vibe.",
-    options: [
-      ["☀️", "Daytime"],
-      ["🌅", "Early evening"],
-      ["🌙", "Evening"],
-      ["🌃", "Late night"]
-    ]
-  },
-  {
-    title: "Dress code?",
-    sub: "No wrong answers.",
-    options: [
-      ["👟", "Keep it casual"],
-      ["👌", "Casual but cute"],
-      ["👔", "Let's dress up"],
-      ["🤷", "Surprise me"]
-    ]
-  },
-  {
-    title: "What's the move?",
-    sub: "What sounds fun?",
-    options: [
-      ["🍝", "Food"],
-      ["🎯", "Something fun"],
-      ["🌳", "Get outside"],
-      ["🍸", "Drinks"],
-      ["🎲", "Surprise me"]
-    ]
-  },
-  {
-    title: "Energy level?",
-    sub: "Be honest.",
-    options: [
-      ["🛋️", "Chill"],
-      ["🙂", "A little adventure"],
-      ["🔥", "Let's do something"],
-      ["🎲", "Surprise me"]
-    ]
-  },
-  {
-    title: "How long are we talking?",
-    sub: "A rough idea is enough.",
-    options: [
-      ["⏱️", "Keep it short"],
-      ["🍽️", "A couple hours"],
-      ["🌙", "Make a night of it"]
-    ]
-  }
-];
+  <script>
+    (function () {
+      "use strict";
 
-let current = -1;
-let answers = Array(questions.length).fill(null);
+      var questions = [
+        { title:"When?", sub:"Pick your ideal vibe.", options:[["☀️","Daytime"],["🌅","Early evening"],["🌙","Evening"],["🌃","Late night"]] },
+        { title:"Dress code?", sub:"No wrong answers.", options:[["👟","Keep it casual"],["👌","Casual but cute"],["👔","Let’s dress up"],["🤷","Surprise me"]] },
+        { title:"What’s the move?", sub:"What sounds fun?", options:[["🍝","Food"],["🎯","Something fun"],["🌳","Get outside"],["🍸","Drinks"],["🎲","Surprise me"]] },
+        { title:"Energy level?", sub:"Be honest.", options:[["🛋️","Chill"],["🙂","A little adventure"],["🔥","Let’s do something"],["🎲","Surprise me"]] },
+        { title:"How long are we talking?", sub:"A rough idea is enough.", options:[["⏱️","Keep it short"],["🍽️","A couple hours"],["🌙","Make a night of it"]] }
+      ];
 
-const main = document.getElementById("main");
-const back = document.getElementById("back");
-const bar = document.getElementById("bar");
-const step = document.getElementById("step");
-const topBar = document.getElementById("top");
+      var main = document.getElementById("main");
+      var top = document.getElementById("top");
+      var back = document.getElementById("back");
+      var fill = document.getElementById("progressFill");
+      var step = document.getElementById("step");
+      var current = -1;
+      var answers = [];
 
-function renderIntro() {
-  topBar.style.visibility = "hidden";
-  main.innerHTML = `
-    <div class="intro fade">
-      <div class="emoji">👀</div>
-      <div class="eyebrow">A very important questionnaire</div>
-      <h1>Okay, help me plan our date.</h1>
-      <p class="sub">A few quick questions. You pick the vibe, I'll figure out the rest.</p>
-      <button class="start" onclick="start()">Let's do it →</button>
-    </div>`;
-}
+      function intro() {
+        top.classList.add("hidden");
+        main.innerHTML =
+          '<section class="screen intro fade">' +
+          '<div class="emoji">👀</div>' +
+          '<div class="eyebrow">A very important questionnaire</div>' +
+          '<h1>Okay, help me plan our date.</h1>' +
+          '<p class="sub">A few quick questions. You pick the vibe, I’ll figure out the rest.</p>' +
+          '<button class="start" id="start" type="button">Let’s do it →</button>' +
+          '</section>';
+        document.getElementById("start").addEventListener("click", startQuiz);
+      }
 
-function startQuiz() {
-  current = 0;
-  renderQuestion();
-}
+      function startQuiz() {
+        current = 0;
+        answers = new Array(questions.length);
+        renderQuestion();
+      }
 
-function renderQuestion() {
-  topBar.style.visibility = "visible";
-  back.classList.toggle("show", current > 0);
-  step.textContent = `${current + 1}/${questions.length}`;
-  bar.style.width = `${((current + 1) / questions.length) * 100}%`;
-  const q = questions[current];
-  const selected = answers[current];
+      function renderQuestion() {
+        var q = questions[current];
+        top.classList.remove("hidden");
+        back.classList.toggle("show", current > 0);
+        step.textContent = (current + 1) + "/" + questions.length;
+        fill.style.width = ((current + 1) / questions.length * 100) + "%";
 
-  main.innerHTML = `
-    <div class="fade">
-      <div class="eyebrow">Question ${current + 1}</div>
-      <h1>${q.title}</h1>
-      <p class="sub">${q.sub}</p>
-      <div class="choices">
-        ${q.options.map((o,i)=>`
-          <button class="choice ${selected===i?'selected':''}" onclick="choose(${i})">
-            <span class="label">${o[0]}&nbsp;&nbsp;${o[1]}</span>
-            <span class="check"></span>
-          </button>`).join("")}
-      </div>
-      <div class="actions">
-        <button class="next ${selected!==null?'enabled':''}" id="next" onclick="next()">Continue</button>
-      </div>
-    </div>`;
-}
+        var html = '<section class="screen fade">' +
+          '<div class="eyebrow">Question ' + (current + 1) + '</div>' +
+          '<h1>' + q.title + '</h1>' +
+          '<p class="sub">' + q.sub + '</p>' +
+          '<div class="choices">';
 
-function choose(i) {
-  answers[current] = i;
-  renderQuestion();
-  // Auto-advance after a tiny beat, keeping the tap interaction satisfying.
-  setTimeout(() => {
-    if (current < questions.length - 1) {
-      current++;
-      renderQuestion();
-    } else {
-      renderResult();
-    }
-  }, 220);
-}
+        for (var i = 0; i < q.options.length; i++) {
+          var selected = answers[current] === i ? " selected" : "";
+          html += '<button class="choice' + selected + '" type="button" data-choice="' + i + '">' +
+            '<span class="label">' + q.options[i][0] + '&nbsp;&nbsp;' + q.options[i][1] + '</span>' +
+            '<span class="check"></span></button>';
+        }
 
-function next() {
-  if (answers[current] === null) return;
-  if (current < questions.length - 1) {
-    current++;
-    renderQuestion();
-  } else renderResult();
-}
+        html += '</div><button class="next' + (answers[current] !== undefined ? " enabled" : "") +
+          '" id="next" type="button">Continue</button></section>';
 
-back.onclick = () => {
-  if (current > 0) {
-    current--;
-    renderQuestion();
-  }
-};
+        main.innerHTML = html;
 
-function renderResult() {
-  topBar.style.visibility = "hidden";
-  const pills = answers.map((a,i) => {
-    const q = questions[i];
-    const o = q.options[a];
-    return `<span class="pill">${o[0]} ${o[1]}</span>`;
-  }).join("");
-  main.innerHTML = `
-    <div class="result fade">
-      <div class="emoji" style="font-size:40px">✨</div>
-      <h1>Okay, I have a vibe.</h1>
-      <p class="sub">Thanks. That's all I needed.</p>
-      <div class="pills">${pills}</div>
-      <div class="mystery">I'll take it from here. 😉</div>
-      <div class="small">Your answers are ready to use.</div>
-    </div>`;
-}
+        var choices = main.querySelectorAll("[data-choice]");
+        for (var j = 0; j < choices.length; j++) {
+          choices[j].addEventListener("click", function () {
+            choose(Number(this.getAttribute("data-choice")));
+          });
+        }
+        document.getElementById("next").addEventListener("click", next);
+      }
 
-document.getElementById("startButton").addEventListener("click", startQuiz);
-</script>
+      function choose(index) {
+        answers[current] = index;
+        if (current === questions.length - 1) {
+          renderResult();
+          return;
+        }
+        current++;
+        renderQuestion();
+      }
+
+      function next() {
+        if (answers[current] === undefined) return;
+        if (current < questions.length - 1) {
+          current++;
+          renderQuestion();
+        } else {
+          renderResult();
+        }
+      }
+
+      function renderResult() {
+        top.classList.add("hidden");
+        var html = '<section class="screen result fade">' +
+          '<div class="emoji">✨</div>' +
+          '<h1>Okay, I have a vibe.</h1>' +
+          '<p class="sub">Thanks. That’s all I needed.</p><div class="pills">';
+
+        for (var i = 0; i < questions.length; i++) {
+          var option = questions[i].options[answers[i]];
+          html += '<span class="pill">' + option[0] + ' ' + option[1] + '</span>';
+        }
+
+        html += '</div><div class="mystery">I’ll take it from here. 😉</div>' +
+          '<div class="small">Your answers are ready to use.</div></section>';
+
+        main.innerHTML = html;
+      }
+
+      back.addEventListener("click", function () {
+        if (current > 0) {
+          current--;
+          renderQuestion();
+        }
+      });
+
+      document.getElementById("start").addEventListener("click", startQuiz);
+    })();
+  </script>
 </body>
 </html>
