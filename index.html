@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7f4ef">
+<title>Help Me Plan Our Date</title>
+<style>
+  :root {
+    --bg: #f7f4ef;
+    --card: #fffdfa;
+    --text: #20201e;
+    --muted: #77736d;
+    --line: #e6e0d7;
+    --accent: #20201e;
+    --accentText: #fffdfa;
+    --radius: 22px;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin:0; min-height:100%; background:var(--bg); color:var(--text); font-family: -apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif; }
+  body { display:flex; justify-content:center; }
+  button { font:inherit; }
+  .app {
+    width:100%;
+    max-width:520px;
+    min-height:100svh;
+    padding:24px 18px calc(28px + env(safe-area-inset-bottom));
+    display:flex;
+    flex-direction:column;
+  }
+  .top { display:flex; align-items:center; gap:12px; min-height:28px; }
+  .back {
+    width:38px; height:38px; border:0; border-radius:50%; background:transparent;
+    color:var(--text); font-size:25px; line-height:1; display:none;
+  }
+  .back.show { display:block; }
+  .progress { flex:1; height:4px; background:var(--line); border-radius:99px; overflow:hidden; }
+  .progress > div { height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .35s ease; }
+  .step { width:34px; text-align:right; font-size:12px; color:var(--muted); }
+  main { flex:1; display:flex; flex-direction:column; justify-content:center; padding:34px 0 24px; }
+  .eyebrow { color:var(--muted); font-size:14px; margin-bottom:10px; }
+  h1 { font-size:clamp(32px, 9vw, 46px); line-height:1.02; letter-spacing:-.045em; margin:0 0 12px; font-weight:750; }
+  .sub { color:var(--muted); font-size:16px; line-height:1.45; margin:0 0 28px; max-width:410px; }
+  .choices { display:grid; gap:11px; }
+  .choice {
+    appearance:none; width:100%; border:1px solid var(--line); background:var(--card); color:var(--text);
+    border-radius:var(--radius); padding:18px 17px; text-align:left; min-height:68px;
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    cursor:pointer; transition:transform .14s ease, background .18s ease, color .18s ease, border-color .18s ease;
+  }
+  .choice:active { transform:scale(.985); }
+  .choice .label { font-size:17px; font-weight:620; letter-spacing:-.01em; }
+  .choice .check { width:24px; height:24px; border-radius:50%; border:1px solid var(--line); flex:0 0 auto; display:grid; place-items:center; font-size:13px; }
+  .choice.selected { background:var(--accent); color:var(--accentText); border-color:var(--accent); }
+  .choice.selected .check { border-color:rgba(255,255,255,.5); background:rgba(255,255,255,.12); }
+  .choice.selected .check::after { content:"✓"; }
+  .actions { display:flex; gap:10px; margin-top:22px; }
+  .next {
+    flex:1; border:0; background:var(--accent); color:var(--accentText); border-radius:18px;
+    min-height:56px; font-weight:700; cursor:pointer; opacity:.35; transition:opacity .2s, transform .14s;
+  }
+  .next.enabled { opacity:1; }
+  .next:active { transform:scale(.985); }
+  .intro { text-align:center; }
+  .intro .emoji { font-size:44px; margin-bottom:18px; }
+  .intro h1 { max-width:420px; margin-left:auto; margin-right:auto; }
+  .start { width:100%; max-width:360px; margin:10px auto 0; min-height:58px; border:0; border-radius:18px; background:var(--accent); color:var(--accentText); font-weight:700; font-size:17px; }
+  .result { text-align:center; }
+  .result h1 { margin-bottom:14px; }
+  .result .sub { margin-left:auto; margin-right:auto; }
+  .pills { display:flex; flex-wrap:wrap; justify-content:center; gap:9px; margin:25px auto 30px; max-width:420px; }
+  .pill { border:1px solid var(--line); background:var(--card); border-radius:999px; padding:11px 14px; font-size:14px; }
+  .mystery { font-size:17px; font-weight:650; margin-top:20px; }
+  .small { color:var(--muted); font-size:13px; margin-top:10px; }
+  .fade { animation:fade .28s ease both; }
+  @keyframes fade { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  @media (min-width:700px) {
+    .app { padding-top:36px; }
+    main { padding-top:50px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top" id="top">
+    <button class="back" id="back" aria-label="Back">‹</button>
+    <div class="progress"><div id="bar"></div></div>
+    <div class="step" id="step"></div>
+  </div>
+  <main id="main"></main>
+</div>
+
+<script>
+const questions = [
+  {
+    title: "When?",
+    sub: "Pick your ideal vibe.",
+    options: [
+      ["☀️", "Daytime"],
+      ["🌅", "Early evening"],
+      ["🌙", "Evening"],
+      ["🌃", "Late night"]
+    ]
+  },
+  {
+    title: "Dress code?",
+    sub: "No wrong answers.",
+    options: [
+      ["👟", "Keep it casual"],
+      ["👌", "Casual but cute"],
+      ["👔", "Let's dress up"],
+      ["🤷", "Surprise me"]
+    ]
+  },
+  {
+    title: "What's the move?",
+    sub: "What sounds fun?",
+    options: [
+      ["🍝", "Food"],
+      ["🎯", "Something fun"],
+      ["🌳", "Get outside"],
+      ["🍸", "Drinks"],
+      ["🎲", "Surprise me"]
+    ]
+  },
+  {
+    title: "Energy level?",
+    sub: "Be honest.",
+    options: [
+      ["🛋️", "Chill"],
+      ["🙂", "A little adventure"],
+      ["🔥", "Let's do something"],
+      ["🎲", "Surprise me"]
+    ]
+  },
+  {
+    title: "How long are we talking?",
+    sub: "A rough idea is enough.",
+    options: [
+      ["⏱️", "Keep it short"],
+      ["🍽️", "A couple hours"],
+      ["🌙", "Make a night of it"]
+    ]
+  }
+];
+
+let current = -1;
+let answers = Array(questions.length).fill(null);
+
+const main = document.getElementById("main");
+const back = document.getElementById("back");
+const bar = document.getElementById("bar");
+const step = document.getElementById("step");
+const top = document.getElementById("top");
+
+function renderIntro() {
+  top.style.visibility = "hidden";
+  main.innerHTML = `
+    <div class="intro fade">
+      <div class="emoji">👀</div>
+      <div class="eyebrow">A very important questionnaire</div>
+      <h1>Okay, help me plan our date.</h1>
+      <p class="sub">A few quick questions. You pick the vibe, I'll figure out the rest.</p>
+      <button class="start" onclick="start()">Let's do it →</button>
+    </div>`;
+}
+
+function start() {
+  current = 0;
+  renderQuestion();
+}
+
+function renderQuestion() {
+  top.style.visibility = "visible";
+  back.classList.toggle("show", current > 0);
+  step.textContent = `${current + 1}/${questions.length}`;
+  bar.style.width = `${((current + 1) / questions.length) * 100}%`;
+  const q = questions[current];
+  const selected = answers[current];
+
+  main.innerHTML = `
+    <div class="fade">
+      <div class="eyebrow">Question ${current + 1}</div>
+      <h1>${q.title}</h1>
+      <p class="sub">${q.sub}</p>
+      <div class="choices">
+        ${q.options.map((o,i)=>`
+          <button class="choice ${selected===i?'selected':''}" onclick="choose(${i})">
+            <span class="label">${o[0]}&nbsp;&nbsp;${o[1]}</span>
+            <span class="check"></span>
+          </button>`).join("")}
+      </div>
+      <div class="actions">
+        <button class="next ${selected!==null?'enabled':''}" id="next" onclick="next()">Continue</button>
+      </div>
+    </div>`;
+}
+
+function choose(i) {
+  answers[current] = i;
+  renderQuestion();
+  // Auto-advance after a tiny beat, keeping the tap interaction satisfying.
+  setTimeout(() => {
+    if (current < questions.length - 1) {
+      current++;
+      renderQuestion();
+    } else {
+      renderResult();
+    }
+  }, 220);
+}
+
+function next() {
+  if (answers[current] === null) return;
+  if (current < questions.length - 1) {
+    current++;
+    renderQuestion();
+  } else renderResult();
+}
+
+back.onclick = () => {
+  if (current > 0) {
+    current--;
+    renderQuestion();
+  }
+};
+
+function renderResult() {
+  top.style.visibility = "hidden";
+  const pills = answers.map((a,i) => {
+    const q = questions[i];
+    const o = q.options[a];
+    return `<span class="pill">${o[0]} ${o[1]}</span>`;
+  }).join("");
+  main.innerHTML = `
+    <div class="result fade">
+      <div class="emoji" style="font-size:40px">✨</div>
+      <h1>Okay, I have a vibe.</h1>
+      <p class="sub">Thanks. That's all I needed.</p>
+      <div class="pills">${pills}</div>
+      <div class="mystery">I'll take it from here. 😉</div>
+      <div class="small">Your answers are ready to use.</div>
+    </div>`;
+}
+
+renderIntro();
+</script>
+</body>
+</html>
