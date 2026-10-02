@@ -151,10 +151,10 @@ const main = document.getElementById("main");
 const back = document.getElementById("back");
 const bar = document.getElementById("bar");
 const step = document.getElementById("step");
-const top = document.getElementById("top");
+const topBar = document.getElementById("top");
 
 function renderIntro() {
-  top.style.visibility = "hidden";
+  topBar.style.visibility = "hidden";
   main.innerHTML = `
     <div class="intro fade">
       <div class="emoji">👀</div>
@@ -171,7 +171,7 @@ function start() {
 }
 
 function renderQuestion() {
-  top.style.visibility = "visible";
+  topBar.style.visibility = "visible";
   back.classList.toggle("show", current > 0);
   step.textContent = `${current + 1}/${questions.length}`;
   bar.style.width = `${((current + 1) / questions.length) * 100}%`;
@@ -226,7 +226,7 @@ back.onclick = () => {
 };
 
 function renderResult() {
-  top.style.visibility = "hidden";
+  topBar.style.visibility = "hidden";
   const pills = answers.map((a,i) => {
     const q = questions[i];
     const o = q.options[a];
